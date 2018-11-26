@@ -31,7 +31,12 @@ public class SchedulingSystemApplication extends Application implements Initiali
     private UserAccount newUser;
     DatabaseHandler databaseHandler;
     @Override
+    public void initialize(URL url, ResourceBundle rb) {
+    	databaseHandler = new DatabaseHandler();
+    }
+    @Override
     public void start(Stage primaryStage) throws IOException {
+        
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Scheduling System Application");
         //primaryStage.setScene(new Scene(root, 1000, 700));
@@ -114,12 +119,9 @@ public class SchedulingSystemApplication extends Application implements Initiali
         });
     }
     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-    	databaseHandler = new DatabaseHandler();
-    }
+
     
-    private void addUser(ActionEvent event) {
+    void addUser() {
     	String first = newUser.getFirstName();
     	String last = newUser.getLastName();
     	String mail = newUser.getEmail();
@@ -141,13 +143,12 @@ public class SchedulingSystemApplication extends Application implements Initiali
 //				+ "		lastname varchar(200),\n"
 //				+ "		isAvail boolean default true"
 //				+ "  )");
-    	String qu = "INSERT INTO USER VALUES ("+
+    	String qu = "INSERT INTO users VALUES ("+
     			"'" + user + "',"+
     			"'" + pass + "',"+
     			"'" + mail + "',"+
     			"'" + first + "',"+
-    			"'" + last + "',"+
-    			"" + true +""+
+    			"'" + last + "'"+
     			")";
     	System.out.println(qu);
     	if(databaseHandler.execAction(qu)) {
@@ -371,6 +372,7 @@ public class SchedulingSystemApplication extends Application implements Initiali
             newUser.setEmail(emailTextField.getText());
             newUser.setFirstName(firstTextField.getText());
             newUser.setLastName(lastTextField.getText());
+            addUser();
             actiontarget_2.setFill(Color.FIREBRICK);
             actiontarget_2.setText("User Account created!");
             });

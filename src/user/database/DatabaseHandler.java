@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class DatabaseHandler {
 	private static DatabaseHandler handler;
 	
-	private static final String DB_URL = "jdbc:derby:ssaDatabase;create=true";
+	private static final String DB_URL = "jdbc:derby:ssaDB";
 	private static Connection conn = null;
 	private static Statement stmt = null;
 	
@@ -35,12 +35,12 @@ public class DatabaseHandler {
 	}
 	
 	private void setupUserTable() {
-		String TABLE_NAME = "USER";
+		String TABLE_NAME = "users";
 		try {
 			stmt = conn.createStatement();
 			
 			DatabaseMetaData dbm = conn.getMetaData();
-			ResultSet tables = dbm.getTables(null, null, TABLE_NAME.toUpperCase(), null);
+			ResultSet tables = dbm.getTables(null, null, TABLE_NAME, null);
 			
 			if (tables.next()) {
 				System.out.println("Table " + TABLE_NAME + "already exists. Ready to blast!");
@@ -48,10 +48,9 @@ public class DatabaseHandler {
 				stmt.execute("CREATE TABLE " + TABLE_NAME + "("
 						+ "		username varchar(200) primary key,\n"
 						+ "		password varchar(200),\n"
-						+ "		email varchar(200),\n"
+						+ "		email varchar(200) primary key,\n"
 						+ "		firstname varchar(200),\n"
-						+ "		lastname varchar(200),\n"
-						+ "		isAvail boolean default true"
+						+ "		lastname varchar(200)"
 						+ "  )");
 			}
 		} catch (SQLException e) {
