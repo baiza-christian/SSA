@@ -311,6 +311,29 @@ public class SchedulingSystemApplication extends Application implements Initiali
             });
     }
     
+    public void makeAppointment() {
+        /*
+        Make Appointment
+        - Show month view of calendar
+        - Have user select day of appointment by clicking on calendar day
+        - Set action to transfer selected calendar date to appointment date
+        - Have user choose time of appointment, or time frame
+        */
+    }
+    
+    public void cancelAppointment() {
+        /*
+        Cancel Appointment
+        - Delete appointment from 'database'
+        */
+    }
+    
+    public void changeAppointment() {
+        /*
+        Change Appointment
+        - Modify date and time/timeframe of selected appointment
+        */
+    }
     
     public void showCreateAccountForm() {
     	Stage stageOne = new Stage();
@@ -441,15 +464,27 @@ public class SchedulingSystemApplication extends Application implements Initiali
         
         
         day.setOnAction(e -> {
-        	DayView();
+            DayView();
         });
         
         week.setOnAction(e -> {
-        	WeekView();
+            WeekView();
         });
         
         month.setOnAction(e -> { // month view
-            showCalendarStage();
+            MonthView();
+        });
+        
+        makeAppt.setOnAction(e -> {
+            makeAppointment();
+        });
+        
+        cancelAppt.setOnAction(e -> {
+            cancelAppointment();
+        });
+        
+        changeAppt.setOnAction(e -> {
+            changeAppointment();
         });
   
         
@@ -470,7 +505,7 @@ public class SchedulingSystemApplication extends Application implements Initiali
     	
     	
     }
-    public void showCalendarStage() {
+    public void MonthView() {
     	Stage calendarStage = new Stage();
     	calendarStage.setScene(new Scene(new FullCalendarView(YearMonth.now()).getView()));
     	calendarStage.show();
