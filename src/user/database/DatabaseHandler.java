@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class DatabaseHandler {
 	private static DatabaseHandler handler;
 	
-	private static final String DB_URL = "jdbc:derby:databases;create=true";
+	private static final String DB_URL = "jdbc:derby:ssaDatabase;create=true";
 	private static Connection conn = null;
 	private static Statement stmt = null;
 	
@@ -26,16 +26,15 @@ public class DatabaseHandler {
 		setupUserTable();
 	}
 	
-	void createConnection() {
+	private void createConnection() {
 		try {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
 			conn = DriverManager.getConnection(DB_URL);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException | IllegalAccessException | InstantiationException | SQLException e) {
 		}
 	}
 	
-	void setupUserTable() {
+	private void setupUserTable() {
 		String TABLE_NAME = "USER";
 		try {
 			stmt = conn.createStatement();

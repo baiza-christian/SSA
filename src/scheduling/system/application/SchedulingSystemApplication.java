@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.fxml.Initializable;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -26,7 +27,7 @@ import javafx.scene.text.*;
  *
  * @author christianbaiza
  */
-public class SchedulingSystemApplication extends Application {
+public class SchedulingSystemApplication extends Application implements Initializable{
     private UserAccount newUser;
     DatabaseHandler databaseHandler;
     @Override
@@ -113,7 +114,7 @@ public class SchedulingSystemApplication extends Application {
         });
     }
     
-    //@Override
+    @Override
     public void initialize(URL url, ResourceBundle rb) {
     	databaseHandler = new DatabaseHandler();
     }
@@ -442,7 +443,7 @@ public class SchedulingSystemApplication extends Application {
         });
         
         week.setOnAction(e -> {
-        	// add function to display week view
+        	WeekView();
         });
         
         month.setOnAction(e -> { // month view
