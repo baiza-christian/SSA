@@ -23,6 +23,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 
+import javafx.beans.value.*;
+import javafx.collections.*;
+import javafx.collections.transformation.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 /**
  *
  * @author christianbaiza
@@ -30,6 +34,32 @@ import javafx.scene.text.*;
 public class SchedulingSystemApplication extends Application implements Initializable{
     private UserAccount newUser;
     DatabaseHandler databaseHandler;
+    
+    // List of appointment table properties
+    private String[] propertyName = {"title",
+       "date", "location"};
+    private String[] propertyLabel = {"Appointment Name",
+       "Date", "Location"};
+    private ApptDAO appt = new ApptDAO();
+    private final GridPane gridPane = new GridPane();
+    private final Label lblName = new Label("Search by Name");
+    private final TextField searchField = new TextField();
+    private ObservableList<Appointment> observableNames;
+    private FilteredList<Appointment> filteredData;
+    private SortedList<Appointment> sortedData;
+    private final ListView<Appointment> listView;
+    TableView<Appointment> apptTableView =
+       new TableView<>();
+    public SchedulingSystemApplication() {
+       lblName.setTextFill(Color.web("#0076a3"));
+       observableNames = FXCollections.observableArrayList
+          (appt.getAppts());
+       filteredData = new FilteredList<>
+          (observableNames, p -> true);
+       sortedData = new SortedList<>(filteredData);
+       listView = new ListView<>(sortedData);
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     	databaseHandler = new DatabaseHandler();
@@ -319,6 +349,56 @@ public class SchedulingSystemApplication extends Application implements Initiali
         - Set action to transfer selected calendar date to appointment date
         - Have user choose time of appointment, or time frame
         */
+        Stage stageOne = new Stage();
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        Scene sceneOne = new Scene(grid, 700, 500);
+        stageOne.setScene(sceneOne);
+        stageOne.show();
+        
+        Text scenetitleOne = new Text("Make Appointment");
+        scenetitleOne.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        grid.add(scenetitleOne, 1, 0, 2, 1);
+
+        /*
+         * Add labels to each row
+         */
+        Label title = new Label("Title:");
+        grid.add(title, 0, 1);
+        TextField titleTextField = new TextField();
+        grid.add(titleTextField, 1, 1);
+        
+        Label date = new Label("Date:");
+        grid.add(date, 0, 2);
+        TextField dateTextField = new TextField();
+        grid.add(dateTextField, 1, 2);
+        
+        Label loc = new Label("Location:");
+        grid.add(loc, 0, 3);
+        TextField locTextField = new TextField();
+        grid.add(locTextField, 1, 3);
+        
+        // Add button
+        Button createAccountBtn = new Button("Make Appointment");
+        HBox hbCreateAccountBtn = new HBox(10);
+        hbCreateAccountBtn.setAlignment(Pos.BOTTOM_LEFT);
+        hbCreateAccountBtn.getChildren().add(createAccountBtn);
+        grid.add(hbCreateAccountBtn, 1, 4);
+        
+        //Event Handler for CreateAccount button
+        final Text actiontarget_2 = new Text();
+        grid.add(actiontarget_2, 1, 5);
+        createAccountBtn.setOnAction((ActionEvent e) -> {
+            Appointment appt = new Appointment("", "", "");
+            appt.setTitle(titleTextField.getText());
+            appt.setDate(dateTextField.getText());
+            appt.setLocation(loc.getText());
+            actiontarget_2.setFill(Color.FIREBRICK);
+            actiontarget_2.setText("Appointment created!");
+            });
     }
     
     public void cancelAppointment() {
@@ -326,6 +406,46 @@ public class SchedulingSystemApplication extends Application implements Initiali
         Cancel Appointment
         - Delete appointment from 'database'
         */
+       /* Stage stageOne = new Stage();
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        Scene sceneOne = new Scene(grid, 700, 500);
+        stageOne.setScene(sceneOne);
+        stageOne.show();
+        
+        Text scenetitleOne = new Text("Modify Appointment: ");
+        scenetitleOne.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        grid.add(scenetitleOne, 1, 0, 2, 1);
+        
+    	Label date = new Label("New Date:");
+        grid.add(date, 0, 1);
+        TextField dateTextField = new TextField();
+        grid.add(dateTextField, 1, 1);
+        
+        Label loc = new Label("New Location:");
+        grid.add(loc, 0, 2);
+        TextField locTextField = new TextField();
+        grid.add(locTextField, 1, 2);
+      
+        
+        Button updateBtn = new Button("Update Appointment");
+        HBox hbUpdateBtn = new HBox(10);
+        hbUpdateBtn.setAlignment(Pos.BOTTOM_LEFT);
+        hbUpdateBtn.getChildren().add(updateBtn);
+        grid.add(hbUpdateBtn, 1, 3);
+        
+        final Text actiontarget_2 = new Text();
+        grid.add(actiontarget_2, 1, 4);
+        updateBtn.setOnAction((ActionEvent e) -> {
+            //            	newUser = new UserAccount();
+            a.setDate(dateTextField.getText());
+            a.setLocation(locTextField.getText());
+            actiontarget_2.setFill(Color.FIREBRICK);
+            actiontarget_2.setText("Appointment updated!");
+            }); */
     }
     
     public void changeAppointment() {
@@ -333,6 +453,138 @@ public class SchedulingSystemApplication extends Application implements Initiali
         Change Appointment
         - Modify date and time/timeframe of selected appointment
         */
+        
+        Stage stage = new Stage();
+        stage.setTitle("Address Book");
+        stage.setMaximized(true);
+        BorderPane borderPane = new BorderPane();
+        Scene scene = new Scene(borderPane,650,400,true);
+        gridPane.setPadding(new Insets(10));
+        gridPane.setHgap(5);
+        gridPane.setVgap(5);
+        gridPane.add(lblName, 0, 0);
+        gridPane.add(searchField, 0, 1);
+        // Search TextField event handling
+        searchField.textProperty()
+           .addListener((observable, oldValue, newValue) ->
+              filteredData.setPredicate(str -> {
+                 if (newValue == null || newValue.isEmpty())
+                    return true;
+                 if (str.getTitle().toLowerCase().contains
+                       (newValue.toLowerCase()))
+                    return true;
+                 return false;
+        }));
+        listView.getSelectionModel().setSelectionMode
+           (SelectionMode.SINGLE);
+        listView.setPrefHeight(Integer.MAX_VALUE);
+        // Sets a new cell factory to use in the ListView.
+        // This throws away all old list cells and new ListCells
+        // created with the new cell factory.
+        listView.setCellFactory(listView-> {
+           Tooltip tooltip = new Tooltip();
+           ListCell<Appointment> cell = new
+                 ListCell<Appointment>() {
+              
+              public void updateItem(Appointment appt,
+                      Boolean empty) {
+                   super.updateItem(appt, empty);
+                   if (appt!= null) {
+                      setText(appt.getTitle());
+                      tooltip.setText(appt.getDate());
+                      setTooltip(tooltip);
+                   } else
+                      setText(null);
+                }
+             };
+             return cell;
+          });
+          gridPane.add(listView, 0, 2);
+          // Create and initializing TableView
+          ObservableList<Appointment> apptList
+             = FXCollections.observableArrayList();
+          apptTableView.setItems(apptList);
+          apptTableView.setColumnResizePolicy(
+             TableView.CONSTRAINED_RESIZE_POLICY);
+          for (int i = 0; i <
+                propertyLabel.length; i++) {
+             TableColumn<Appointment, Object> col
+                = new TableColumn<>(propertyLabel[i]);
+             col.setCellValueFactory(new
+                PropertyValueFactory<>(propertyName[i]));
+             apptTableView.getColumns().add(col);
+          }
+          borderPane.setCenter(apptTableView);
+          borderPane.setLeft(gridPane);
+          // TableView will populate from the apptList
+          // apptList will have value according to the
+          // item selected in the ListView
+          listView.getSelectionModel()
+             .selectedItemProperty()
+             .addListener(new ChangeListener<Appointment>() {
+                @Override
+                public void changed(
+                   ObservableValue<? extends
+                      Appointment> observable,
+                   Appointment oldValue, Appointment newValue) {
+                   if (observable != null &&
+                         observable.getValue() != null) {
+                      apptList.clear();
+                      apptList.addAll(
+                         appt.getAppt
+                            (newValue.getTitle(), newValue.getDate()));
+                      }
+                   }
+                });
+          stage.setScene(scene);
+          stage.show();
+        Appointment apptToChange = new Appointment();
+        modify(apptToChange);
+    
+    }
+    
+    public void modify(Appointment a)
+    {
+        Stage stageOne = new Stage();
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        Scene sceneOne = new Scene(grid, 700, 500);
+        stageOne.setScene(sceneOne);
+        stageOne.show();
+        
+        Text scenetitleOne = new Text("Modify Appointment: ");
+        scenetitleOne.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        grid.add(scenetitleOne, 1, 0, 2, 1);
+        
+    	Label date = new Label("New Date:");
+        grid.add(date, 0, 1);
+        TextField dateTextField = new TextField();
+        grid.add(dateTextField, 1, 1);
+        
+        Label loc = new Label("New Location:");
+        grid.add(loc, 0, 2);
+        TextField locTextField = new TextField();
+        grid.add(locTextField, 1, 2);
+      
+        
+        Button updateBtn = new Button("Update Appointment");
+        HBox hbUpdateBtn = new HBox(10);
+        hbUpdateBtn.setAlignment(Pos.BOTTOM_LEFT);
+        hbUpdateBtn.getChildren().add(updateBtn);
+        grid.add(hbUpdateBtn, 1, 3);
+        
+        final Text actiontarget_2 = new Text();
+        grid.add(actiontarget_2, 1, 4);
+        updateBtn.setOnAction((ActionEvent e) -> {
+            //            	newUser = new UserAccount();
+            a.setDate(dateTextField.getText());
+            a.setLocation(locTextField.getText());
+            actiontarget_2.setFill(Color.FIREBRICK);
+            actiontarget_2.setText("Appointment updated!");
+            });
     }
     
     public void showCreateAccountForm() {
