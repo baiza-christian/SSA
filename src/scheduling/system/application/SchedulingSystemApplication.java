@@ -456,15 +456,6 @@ public class SchedulingSystemApplication extends Application implements Initiali
         - Modify date and time/timeframe of selected appointment
         */
         
-        // want to get which appointment to change then call modify(appt) to bring up the 
-        // web form to enter new info
-        Appointment apptToChange = new Appointment();
-        modify(apptToChange);
-    
-    }
-    
-    public void modify(Appointment a) // form to enter new info
-    {
         Stage stageOne = new Stage();
     	GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -479,33 +470,47 @@ public class SchedulingSystemApplication extends Application implements Initiali
         scenetitleOne.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitleOne, 1, 0, 2, 1);
         
-    	Label date = new Label("New Date:");
-        grid.add(date, 0, 1);
-        TextField dateTextField = new TextField();
-        grid.add(dateTextField, 1, 1);
+    	Label title = new Label("Title of Appointment to Modify:");
+        grid.add(title, 0, 1);
+        TextField titleTextField = new TextField();
+        grid.add(titleTextField, 1, 1);
         
-        Label loc = new Label("New Location:");
-        grid.add(loc, 0, 2);
-        TextField locTextField = new TextField();
-        grid.add(locTextField, 1, 2);
+        Label date = new Label("Date of Appointment to Modify:");
+        grid.add(date, 0, 2);
+        TextField dateTextField = new TextField();
+        grid.add(dateTextField, 1, 2);
       
+        Label ndate = new Label("New date:");
+        grid.add(ndate, 0, 3);
+        TextField ndateTextField = new TextField();
+        grid.add(ndateTextField, 1, 3);
+        
+        Label newloc = new Label("New location:");
+        grid.add(newloc, 0, 4);
+        TextField newlocTextField = new TextField();
+        grid.add(newlocTextField, 1, 4);
         
         Button updateBtn = new Button("Update Appointment");
         HBox hbUpdateBtn = new HBox(10);
         hbUpdateBtn.setAlignment(Pos.BOTTOM_LEFT);
         hbUpdateBtn.getChildren().add(updateBtn);
-        grid.add(hbUpdateBtn, 1, 3);
+        grid.add(hbUpdateBtn, 1, 5);
         
         final Text actiontarget_2 = new Text();
-        grid.add(actiontarget_2, 1, 4);
+        grid.add(actiontarget_2, 1, 6);
         updateBtn.setOnAction((ActionEvent e) -> {
-            //            	newUser = new UserAccount();
-            a.setDate(dateTextField.getText());
-            a.setLocation(locTextField.getText());
+            String ttl = titleTextField.getText();
+            String oldDate = dateTextField.getText();
+            String newDate = ndateTextField.getText();
+            String loc = newlocTextField.getText();
+            appt.modifyAppt(ttl, oldDate, newDate, loc);
+            
             actiontarget_2.setFill(Color.FIREBRICK);
             actiontarget_2.setText("Appointment updated!");
-            });
+        });
+    
     }
+
     
     public void showCreateAccountForm() {
     	Stage stageOne = new Stage();
