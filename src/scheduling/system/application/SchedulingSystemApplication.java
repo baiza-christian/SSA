@@ -10,7 +10,10 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ResourceBundle;
-
+import java.util.*;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -512,18 +515,51 @@ public class SchedulingSystemApplication extends Application implements Initiali
     }
 
     
-    public void exportSchedule() {
+    public static void exportSchedule(List<Appointment> exportedApptList) throws IOException{
         /*
         Export user schedule to a file containing ?List? of user's appointments
         - Text file?
         - CSV file?
         */
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("exported_schedule.txt"));
+            if (exportedApptList.isEmpty()) {
+                String empty_string = "";
+                bw.write(empty_string);
+                bw.close();
+            }
+            else {
+                for (int i = 0; i < exportedApptList.size(); i++) {
+                    bw.write(exportedApptList.get(i) + "\n");
+                }
+            }
+        }
+        catch (IOException e)
+        {
+        }
     }
     
     public void importSchedule() {
         /*
         Import another user's schedule via a file
         */
+        URL url = getClass().getResource("imported_schedule.txt");
+        File file = new File(url.getPath());
+        try {
+            InputStream input = new FileInputStream(file);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(SchedulingSystemApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ArrayList<String> importedApptList = new ArrayList<String>();
+        try {
+            Scanner sc = new Scanner(file);
+            while (sc.hasNextLine()) {
+            importedApptList.add(sc.nextLine());
+        }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(SchedulingSystemApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
     public void showCreateAccountForm() {
@@ -610,6 +646,7 @@ public class SchedulingSystemApplication extends Application implements Initiali
         Menu appt = new Menu("Appointment"); 
         Menu cal = new Menu("Calendar"); 
         MenuItem clr = new MenuItem("Set Color"); 
+        Menu sch = new Menu("Schedule");
         
         MenuItem createAcc = new MenuItem("Create Account");
         MenuItem changeUserPass = new MenuItem("Changer Username/Password");
@@ -633,6 +670,11 @@ public class SchedulingSystemApplication extends Application implements Initiali
         setCalRange.getItems().add(week);
         setCalRange.getItems().add(month);
         cal.getItems().add(setCalRange);
+        
+        MenuItem exportSchedule = new MenuItem("Export Schedule");
+        MenuItem importSchedule = new MenuItem("Import Schedule");
+        sch.getItems().add(exportSchedule);
+        sch.getItems().add(importSchedule);
 
   
         // add menu items to menu 
@@ -640,6 +682,7 @@ public class SchedulingSystemApplication extends Application implements Initiali
         m.getItems().add(appt); 
         m.getItems().add(cal); 
         m.getItems().add(clr); 
+        m.getItems().add(sch);
   
         createAcc.setOnAction(e -> {
             showCreateAccountForm();
@@ -676,6 +719,14 @@ public class SchedulingSystemApplication extends Application implements Initiali
         
         changeAppt.setOnAction(e -> {
             changeAppointment();
+        });
+        
+        exportSchedule.setOnAction((ActionEvent e) -> {
+            //exportSchedule(appt.g);
+        });
+        
+        importSchedule.setOnAction(e -> {
+            importSchedule();
         });
   
         

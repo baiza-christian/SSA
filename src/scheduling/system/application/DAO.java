@@ -11,7 +11,7 @@ package scheduling.system.application;
  */
 public interface DAO {
     public static final String DB_URL =
-      "jdbc:mysql://localhost:3306/SSA_DB";
+      "jdbc:derby:ssaDB";
    public static final String DRIVER =
-      "com.mysql.jdbc.Driver";
+      "org.apache.derby.jdbc.EmbeddedDriver";
 }

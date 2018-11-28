@@ -24,6 +24,7 @@ public class DatabaseHandler {
 	public DatabaseHandler() {
 		createConnection();
 		setupUserTable();
+                setupApptTable();
 	}
 	
 	private void createConnection() {
