@@ -512,6 +512,20 @@ public class SchedulingSystemApplication extends Application implements Initiali
     }
 
     
+    public void exportSchedule() {
+        /*
+        Export user schedule to a file containing ?List? of user's appointments
+        - Text file?
+        - CSV file?
+        */
+    }
+    
+    public void importSchedule() {
+        /*
+        Import another user's schedule via a file
+        */
+    }
+    
     public void showCreateAccountForm() {
     	Stage stageOne = new Stage();
     	GridPane grid = new GridPane();
