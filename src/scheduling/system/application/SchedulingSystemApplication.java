@@ -34,7 +34,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
  *
  * @author christianbaiza
  */
-public class SchedulingSystemApplication extends Application implements Initializable{
+public class SchedulingSystemApplication extends Application {
     private UserAccount newUser;
     DatabaseHandler databaseHandler;
     
@@ -64,16 +64,12 @@ public class SchedulingSystemApplication extends Application implements Initiali
     }
     
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-    	databaseHandler = new DatabaseHandler();
-    }
-    @Override
     public void start(Stage primaryStage) throws IOException {
         
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Scheduling System Application");
         //primaryStage.setScene(new Scene(root, 1000, 700));
-
+        databaseHandler = new DatabaseHandler();
         /*
          * Add GridPane for login form
          */

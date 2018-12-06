@@ -17,14 +17,14 @@ import java.sql.SQLException;
 public class DatabaseHandler {
 	private static DatabaseHandler handler;
 	
-	private static final String DB_URL = "jdbc:derby:ssaDB";
+	private static final String DB_URL = "jdbc:derby:/Users/christianbaiza/NetBeansProjects/Scheduling-System-Application/ssaDB";
 	private static Connection conn = null;
 	private static Statement stmt = null;
 	
 	public DatabaseHandler() {
 		createConnection();
-		setupUserTable();
-                setupApptTable();
+		//setupUserTable();
+                //setupApptTable();
 	}
 	
 	private void createConnection() {
