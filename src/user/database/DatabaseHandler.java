@@ -35,52 +35,6 @@ public class DatabaseHandler {
 		}
 	}
 	
-	private void setupUserTable() {
-		String TABLE_NAME = "users";
-		try {
-			stmt = conn.createStatement();
-			
-			DatabaseMetaData dbm = conn.getMetaData();
-			ResultSet tables = dbm.getTables(null, null, TABLE_NAME, null);
-			
-			if (tables.next()) {
-				System.out.println("Table " + TABLE_NAME + "already exists. Ready to blast!");
-			} else {
-				stmt.execute("CREATE TABLE " + TABLE_NAME + "("
-						+ "		username varchar(200) primary key,\n"
-						+ "		password varchar(200),\n"
-						+ "		email varchar(200) primary key,\n"
-						+ "		firstname varchar(200),\n"
-						+ "		lastname varchar(200)"
-						+ "  )");
-			}
-		} catch (SQLException e) {
-			System.err.println(e.getMessage() + " ... setupDatabase");
-		}
-	}
-        
-        private void setupApptTable() {
-		String TABLE_NAME = "appointments";
-		try {
-			stmt = conn.createStatement();
-			
-			DatabaseMetaData dbm = conn.getMetaData();
-			ResultSet tables = dbm.getTables(null, null, TABLE_NAME, null);
-			
-			if (tables.next()) {
-				System.out.println("Table " + TABLE_NAME + "already exists. Ready to blast!");
-			} else {
-				stmt.execute("CREATE TABLE " + TABLE_NAME + "("
-						+ "		name varchar(200) primary key,\n"
-						+ "		apptDate date primaryKey, \n"
-                                                + "             location varchar(200)"
-						+ "  )");
-			}
-		} catch (SQLException e) {
-			System.err.println(e.getMessage() + " ... setupDatabase");
-		}
-	}
-	
 	public ResultSet execQuery(String query) {
 		ResultSet result;
 		try {
