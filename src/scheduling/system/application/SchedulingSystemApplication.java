@@ -12,6 +12,8 @@ import java.time.YearMonth;
 import java.util.ResourceBundle;
 import java.util.*;
 import java.io.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -29,6 +31,7 @@ import javafx.scene.text.*;
 import javafx.beans.value.*;
 import javafx.collections.*;
 import javafx.collections.transformation.*;
+import javafx.event.EventHandler;
 import javafx.scene.control.cell.PropertyValueFactory;
 /**
  *
@@ -121,14 +124,19 @@ public class SchedulingSystemApplication extends Application {
          */
         final Text actiontarget = new Text();
         grid.add(actiontarget, 1, 6);
-        btn.setOnAction((ActionEvent e) -> {
-            //actiontarget.setFill(Color.FIREBRICK);
-            //actiontarget.setText("Denied, LOL.");
-            
-            // If username and password are from existing account in database
-            // Open the Main Stage
-            showMainStage();
-            // Else show error message
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                //actiontarget.setFill(Color.FIREBRICK);
+                //actiontarget.setText("Denied, LOL.");
+                    
+                checkUsers();    
+                
+                // If username and password are from existing account in database
+                // Open the Main Stage
+                showMainStage();
+                // Else show error message
+            }
         });
         
         /*
@@ -146,6 +154,19 @@ public class SchedulingSystemApplication extends Application {
         btn2.setOnAction((ActionEvent e) -> {
             showCreateAccountForm();
         });
+    }
+    
+    public void checkUsers() {
+        String qu = "SELECT username FROM users";
+        ResultSet rs = databaseHandler.execQuery(qu);
+        try {
+            while (rs.next()) {
+                String userNames = rs.getString("username");
+                System.out.println(userNames);
+            }
+        } catch (SQLException x){
+            Logger.getLogger(SchedulingSystemApplication.class.getName()).log(Level.SEVERE, null, x);
+        }
     }
     
 
@@ -183,7 +204,7 @@ public class SchedulingSystemApplication extends Application {
     	if(databaseHandler.execAction(qu)) {
     		Alert alert = new Alert(Alert.AlertType.INFORMATION);
     		alert.setHeaderText(null);
-    		alert.setContentText("Success");
+    		alert.setContentText("Account created! Please log in.");
     		alert.showAndWait();
     	}
     	else {
@@ -619,8 +640,6 @@ public class SchedulingSystemApplication extends Application {
             newUser.setFirstName(firstTextField.getText());
             newUser.setLastName(lastTextField.getText());
             addUser();
-            actiontarget_2.setFill(Color.FIREBRICK);
-            actiontarget_2.setText("User Account created!");
             });
     }
     
