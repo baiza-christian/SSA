@@ -85,8 +85,8 @@ public class ApptDAO implements DAO {
       }
    }
       
-      public String createAppt(Appointment a)
-      {/*
+      public void createAppt(Appointment a)
+      {
         PreparedStatement pstmt = null;
         try {
          Class.forName(DRIVER);
@@ -103,55 +103,7 @@ public class ApptDAO implements DAO {
         pstmt.close();
         con.close();
       } catch (ClassNotFoundException | SQLException ex) {
-      }*/
-        Connection conn = null; //initialize the connection
-        Statement stmt = null;  //initialize the statement that we're using
-        try {
-
-            Class.forName("org.apache.derby.jdbc.ClientDriver");
-
-            System.out.println("Connecting to database...");
-            conn = DriverManager.getConnection(DB_URL);
-
-            String insertstmt = "insert into appointments values(?, ?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(insertstmt);
-            
-            pstmt.setString(1, a.getTitle());
-            pstmt.setString(2, a.getDate());
-            pstmt.setString(3, a.getLocation());
-       
-            int recordsUpdated = pstmt.executeUpdate();
-            
-            conn.close();
-            if (recordsUpdated > 0)
-            {
-                return "Appointment created.";
-            }
-         
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException se2) {
-            }// nothing we can do
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }//end finally try
-            
-        }
-        return "Error: cannot create appointment";
+      }
       }
       
       public void modifyAppt(String apptTitle, String oldDate, String newDate, String newLoc)

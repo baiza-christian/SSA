@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class DatabaseHandler {
 	private static DatabaseHandler handler;
 	
-	private static final String DB_URL = "jdbc:derby:C:\\Users\\Mariel\\Documents\\NetBeansProjects\\scheduling-system\\SchedulingSys\\ssaDB";
+	private static final String DB_URL = "jdbc:derby:/Users/christianbaiza/NetBeansProjects/Scheduling-System-Application/ssaDB";
 	private static Connection conn = null;
 	private static Statement stmt = null;
 	
@@ -31,9 +31,7 @@ public class DatabaseHandler {
 		try {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
 			conn = DriverManager.getConnection(DB_URL);
-		} catch (Exception e) {
-                        System.err.println(e);
-                       System.err.println(e.getMessage());
+		} catch (ClassNotFoundException | IllegalAccessException | InstantiationException | SQLException e) {
 		}
 	}
 	
