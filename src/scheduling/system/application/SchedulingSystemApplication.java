@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.*;
@@ -193,6 +194,67 @@ public class SchedulingSystemApplication extends Application {
     		alert.showAndWait();
     	}
     }
+    
+    void addAppt(String title, String date, String location) {
+        
+    	String qu = "INSERT INTO appointments VALUES ("+
+    			"'" + title+ "',"+
+    			"'" + date+ "',"+
+    			"'" + location + "')";
+    	System.out.println(qu);
+    	if(databaseHandler.execAction(qu)) {
+    		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    		alert.setHeaderText(null);
+    		alert.setContentText("Appointment added successfully.");
+    		alert.showAndWait();
+    	}
+    	else {
+    		Alert alert = new Alert(Alert.AlertType.ERROR);
+    		alert.setHeaderText(null);
+    		alert.setContentText("Error: Unable to add appointment.");
+    		alert.showAndWait();
+    	}
+    }
+    
+    void deleteAppt(String title, String date) {
+        
+    	String qu = "DELETE FROM appointments WHERE title = '" + title
+                    + "' and apptDate = '" + date + "'";
+    	System.out.println(qu);
+    	if(databaseHandler.execAction(qu)) {
+    		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    		alert.setHeaderText(null);
+    		alert.setContentText("Appointment deleted successfully.");
+    		alert.showAndWait();
+    	}
+    	else {
+    		Alert alert = new Alert(Alert.AlertType.ERROR);
+    		alert.setHeaderText(null);
+    		alert.setContentText("Error: Unable to delete appointment.");
+    		alert.showAndWait();
+    	}
+    }
+    
+    void modifyAppt(String title, String oldDate, String newDate, String loc) {
+        
+    	String qu = "UPDATE appointments SET apptDate = '" + newDate + "', "
+                + "location = '" + loc + "' WHERE title = '" + title + "' and apptDate = '"
+                + oldDate + "'";
+    	System.out.println(qu);
+    	if(databaseHandler.execAction(qu)) {
+    		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    		alert.setHeaderText(null);
+    		alert.setContentText("Appointment modified successfully.");
+    		alert.showAndWait();
+    	}
+    	else {
+    		Alert alert = new Alert(Alert.AlertType.ERROR);
+    		alert.setHeaderText(null);
+    		alert.setContentText("Error: Unable to update appointment.");
+    		alert.showAndWait();
+    	}
+    }
+    
     public void DayView()
     {
     	Stage stageOne = new Stage();
@@ -388,16 +450,8 @@ public class SchedulingSystemApplication extends Application {
         grid.add(hbCreateAccountBtn, 1, 4);
         
         //Event Handler for CreateAccount button
-        final Text actiontarget_2 = new Text();
-        grid.add(actiontarget_2, 1, 5);
         createAccountBtn.setOnAction((ActionEvent e) -> {
-            Appointment a = new Appointment();
-            a.setTitle(titleTextField.getText());
-            a.setDate(dateTextField.getText());
-            a.setLocation(loc.getText());
-            appt.createAppt(a);
-            actiontarget_2.setFill(Color.FIREBRICK);
-            actiontarget_2.setText("Appointment created!");
+            addAppt(titleTextField.getText(), dateTextField.getText(), locTextField.getText());
             });
     }
     
@@ -437,15 +491,11 @@ public class SchedulingSystemApplication extends Application {
         hbCancelBtn.getChildren().add(cancelBtn);
         grid.add(hbCancelBtn, 1, 3);
         
-        final Text actiontarget_2 = new Text();
-        grid.add(actiontarget_2, 1, 4);
         cancelBtn.setOnAction((ActionEvent e) -> {
             //            	newUser = new UserAccount();
             String ttl = titleTextField.getText();
             String dte = dateTextField.getText();
-            appt.deleteAppt(ttl, dte);
-            actiontarget_2.setFill(Color.FIREBRICK);
-            actiontarget_2.setText("Appointment cancelled!");
+            deleteAppt(ttl, dte);
             });
     }
     
@@ -495,17 +545,13 @@ public class SchedulingSystemApplication extends Application {
         hbUpdateBtn.getChildren().add(updateBtn);
         grid.add(hbUpdateBtn, 1, 5);
         
-        final Text actiontarget_2 = new Text();
-        grid.add(actiontarget_2, 1, 6);
         updateBtn.setOnAction((ActionEvent e) -> {
             String ttl = titleTextField.getText();
             String oldDate = dateTextField.getText();
             String newDate = ndateTextField.getText();
             String loc = newlocTextField.getText();
-            appt.modifyAppt(ttl, oldDate, newDate, loc);
-            
-            actiontarget_2.setFill(Color.FIREBRICK);
-            actiontarget_2.setText("Appointment updated!");
+            modifyAppt(ttl, oldDate, newDate, loc);
+
         });
     
     }

@@ -9,6 +9,7 @@ package scheduling.system.application;
  *
  * @author christianbaiza
  */
+import java.sql.ResultSet;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -20,6 +21,16 @@ import javafx.scene.text.Text;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import user.database.DatabaseHandler;
 
 
 public class FullCalendarView {
@@ -29,6 +40,7 @@ public class FullCalendarView {
     private Text calendarTitle;
     private YearMonth currentYearMonth;
 
+    DatabaseHandler databaseHandler = new DatabaseHandler();
     /**
      * Create a calendar view
      * @param yearMonth year month to create the calendar of
@@ -96,16 +108,74 @@ public class FullCalendarView {
             if (ap.getChildren().size() != 0) {
                 ap.getChildren().remove(0);
             }
-            Text txt = new Text(String.valueOf(calendarDate.getDayOfMonth()));
+            
+            String day = String.valueOf(calendarDate.getDayOfMonth());
+            Hyperlink txt = new Hyperlink(day);
             ap.setDate(calendarDate);
             AnchorPane.setTopAnchor(txt, 5.0);
             AnchorPane.setLeftAnchor(txt, 5.0);
             ap.getChildren().add(txt);
             calendarDate = calendarDate.plusDays(1);
+            
+            txt.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                String date = yearMonth.getYear() + "-" + yearMonth.getMonthValue() + "-" + day;
+                Stage stageOne = new Stage();
+                GridPane grid = new GridPane();
+                grid.setAlignment(Pos.TOP_CENTER);
+                grid.setHgap(10);
+                grid.setVgap(10);
+                grid.setPadding(new Insets(25, 25, 25, 25));
+                Scene sceneOne = new Scene(grid, 700, 500);
+                stageOne.setScene(sceneOne);
+                stageOne.show();
+
+                String currDayOfWeek = LocalDate.now().getDayOfWeek().toString();
+                Text scenetitleOne = new Text(LocalDate.now().toString() + "\t" + currDayOfWeek);
+                Text appt = new Text("Appointment List:");
+                
+                scenetitleOne.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+                grid.add(scenetitleOne, 1, 0);
+
+                appt.setFont(Font.font("Tahoma", FontWeight.NORMAL, 15));
+                grid.add(appt, 1, 1);
+                
+                String qu = "SELECT * FROM appointments where apptDate = '" + date + "'";
+                System.out.println(qu);
+                ResultSet rs = databaseHandler.execQuery(qu);
+                
+                int i = 2;
+                try
+                {
+                    while (rs.next())
+                    {
+                        String title = rs.getString("title");
+                        String aDate = rs.getString("apptDate");
+                        String loc = rs.getString("location");
+                        
+                        Text titleText = new Text(title);
+                        Text locText = new Text("Location: "+ loc + "\n");
+          
+                        titleText.setFont(Font.font("Tahoma", FontWeight.NORMAL, 12));
+                        locText.setFont(Font.font("Tahoma", FontWeight.NORMAL, 12));
+
+                        grid.add(titleText, 1, i); i++;
+                        grid.add(locText, 1, i); i++;
+                    }   
+                } catch (Exception e)
+                {
+                }
+                    
+            }
+            });
         }
         // Change the title of the calendar
         calendarTitle.setText(yearMonth.getMonth().toString() + " " + String.valueOf(yearMonth.getYear()));
     }
+
+    
 
     /**
      * Move the month back by one. Repopulate the calendar with the correct dates.
